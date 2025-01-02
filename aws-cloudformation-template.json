@@ -1,0 +1,102 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Description": "EC2 Instance with EBS (Volume)",
+    "Parameters": {
+        "MyInstance": {
+            "Description": "Instance type for the EC2",
+            "Type": "String",
+            "AllowedValues": ["t2.nano", "t2.micro", "t2.medium", "t2.large"],
+            "Default": "t2.micro"
+        }
+    },
+    "Resources": {
+        "WzSG": {
+            "Type": "AWS::EC2::SecurityGroup",
+            "Properties": {
+                "GroupDescription": "Allow SSH and HTTP traffic",
+                "SecurityGroupIngress": [
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": 22,
+                        "ToPort": 22,
+                        "CidrIp": "0.0.0.0/0"
+                    },
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": 80,
+                        "ToPort": 80,
+                        "CidrIp": "0.0.0.0/0"
+                    }
+                ]
+            }
+        },
+        "Wz1EC2": {
+            "Type": "AWS::EC2::Instance",
+            "Properties": {
+                "ImageId": "ami-06650ca7ed78ff6fa",
+                "InstanceType": {
+                    "Ref": "MyInstance"
+                },
+                "KeyName": "wzfirst",
+                "SecurityGroups": [
+                    {
+                        "Ref": "WzSG"
+                    }
+                ],
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": "EC2withLAMP"
+                    }
+                ],
+                "UserData": {
+                    "Fn::Base64": {
+                        "Fn::Sub": "#!/bin/bash\nsudo apt update -y\nsudo apt upgrade -y\nsudo apt install -y lamp-server^\n"
+                    }
+                }
+            }
+        },
+        "Wz2EC2": {
+            "Type": "AWS::EC2::Instance",
+            "Properties": {
+                "ImageId": "ami-06650ca7ed78ff6fa",
+                "InstanceType": {
+                    "Ref": "MyInstance"
+                },
+                "KeyName": "wzfirst",
+                "SecurityGroups": [
+                    {
+                        "Ref": "WzSG"
+                    }
+                ],
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": "1EC2withoutLAMP"
+                    }
+                ]
+            }
+        },
+        "Wz3EC2": {
+            "Type": "AWS::EC2::Instance",
+            "Properties": {
+                "ImageId": "ami-06650ca7ed78ff6fa",
+                "InstanceType": {
+                    "Ref": "MyInstance"
+                },
+                "KeyName": "wzfirst",
+                "SecurityGroups": [
+                    {
+                        "Ref": "WzSG"
+                    }
+                ],
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": "2EC2withoutLAMP"
+                    }
+                ]
+            }
+        }
+    }
+}
